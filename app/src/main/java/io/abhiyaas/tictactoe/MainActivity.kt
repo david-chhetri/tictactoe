@@ -3,8 +3,8 @@ package io.abhiyaas.tictactoe
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -41,6 +42,12 @@ import io.abhiyaas.tictactoe.ui.theme.TicTacToeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+
+enum class Win {
+    PLAYER,
+    AI,
+    DRAW
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,15 +85,17 @@ fun MainScreen() {
         )
     }
 
+    val win = remember { mutableStateOf<Win?>(null) }
 
     val onTap: (Offset) -> Unit = {
-        if (playerTurn.value ) {
+        if (playerTurn.value) {
             val x = (it.x / 333).toInt()
             val y = (it.y / 333).toInt()
             val posInMoves = y * 3 + x
             if (moves[posInMoves] == null) {
                 moves[posInMoves] = true
                 playerTurn.value = false
+                win.value = checkEndGame(moves)
             }
         }
 
@@ -102,7 +111,7 @@ fun MainScreen() {
         Board(moves, onTap)
 
         //AI moves - implementing Spinner with Coroutine
-        if (!playerTurn.value ) {
+        if (!playerTurn.value) {
             CircularProgressIndicator(color = Color.Red, modifier = Modifier.padding(16.dp))
 
             val coroutineScope = rememberCoroutineScope()
@@ -114,7 +123,7 @@ fun MainScreen() {
                         if (moves[i] == null) {
                             moves[i] = false
                             playerTurn.value = true
-                            //we will have infinite loop if board is full
+                            win.value = checkEndGame(moves)
                             break
                         }
                     }
@@ -123,8 +132,37 @@ fun MainScreen() {
 
         }
 
-    }
+        //check if the game is finished
+        if (win.value != null) {
+            when (win.value) {
+                Win.PLAYER -> {
+                    Text(text = "Player has won \uD83C\uDF89", fontSize = 25.sp)
+                }
 
+                Win.AI -> {
+                    Text(text = "AI has won \uD83D\uDE24", fontSize = 25.sp)
+
+                }
+
+                Win.DRAW -> {
+                    Text(text = "The game is a draw \uD83D\uDE33", fontSize = 25.sp)
+                }
+
+                else -> {}
+            }
+
+            Button(onClick = {
+                playerTurn.value = true
+                win.value = null
+                for (i in 0..8) {
+                    moves[i] = null
+                }
+            }) {
+                Text(text = "Click to startover")
+            }
+        }
+
+    }
 
 }
 
@@ -169,7 +207,7 @@ fun Header(playerTurn: Boolean) {
 }
 
 @Composable
-fun Board(moves: List<Boolean?>,onTap: (Offset) -> Unit ) {
+fun Board(moves: List<Boolean?>, onTap: (Offset) -> Unit) {
     Box(
         modifier = Modifier
             .aspectRatio(1f)
@@ -238,7 +276,7 @@ fun Board(moves: List<Boolean?>,onTap: (Offset) -> Unit ) {
 
 //to place symbols on the grid
 @Composable
-fun getComposableFromMove(move: Boolean?){
+fun getComposableFromMove(move: Boolean?) {
 
     when (move) {
         true -> Image(
@@ -261,4 +299,53 @@ fun getComposableFromMove(move: Boolean?){
             modifier = Modifier.fillMaxSize(1f)
         )
     }
+}
+
+//Checking the result
+fun checkEndGame(m: List<Boolean?>): Win? {
+    var win: Win? = null
+    if (
+    //rows complete
+        (m[0] == true && m[1] == true && m[2] == true) ||
+        (m[3] == true && m[4] == true && m[5] == true) ||
+        (m[6] == true && m[7] == true && m[8] == true) ||
+
+        //columns complete
+        (m[0] == true && m[3] == true && m[6] == true) ||
+        (m[1] == true && m[4] == true && m[7] == true) ||
+        (m[2] == true && m[5] == true && m[8] == true) ||
+
+        //across complete
+        (m[0] == true && m[4] == true && m[8] == true) ||
+        (m[2] == true && m[4] == true && m[6] == true)
+    )
+        win = Win.PLAYER
+
+
+    if (
+        (m[0] == false && m[1] == false && m[2] == false) ||
+        (m[3] == false && m[4] == false && m[5] == false) ||
+        (m[6] == false && m[7] == false && m[8] == false) ||
+
+        (m[0] == false && m[3] == false && m[6] == false) ||
+        (m[1] == false && m[4] == false && m[7] == false) ||
+        (m[2] == false && m[5] == false && m[8] == false) ||
+
+        (m[0] == false && m[4] == false && m[8] == false) ||
+        (m[2] == false && m[4] == false && m[6] == false)
+    )
+        win = Win.AI
+
+    if (win == null) {
+        var available = false
+        for (i in 0..8) {
+            if (m[i] == null)
+                available = true
+        }
+        if (!available)
+            win = Win.DRAW
+    }
+
+    return win
+
 }
