@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.abhiyaas.tictactoe.ui.theme.TicTacToeTheme
@@ -165,9 +168,45 @@ fun Board(moves: List<Boolean?>) {
                     .background(Color.Black)
             ) {}
         }
-
+        //inside box getting symbols
+        Column(modifier = Modifier.fillMaxSize(1f)) {
+            for (i in 0..2) {
+                Row(modifier = Modifier.weight(1f)) {
+                    for (j in 0..2) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            getComposableFromMove(move = moves[i * 3 + j])
+                        }
+                    }
+                }
+            }
+        }
 
     }
+}
 
+//to place symbols on the grid
+@Composable
+fun getComposableFromMove(move: Boolean?){
 
+    when (move) {
+        true -> Image(
+            painter = painterResource(id = R.drawable.ic_x),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(1f),
+            colorFilter = ColorFilter.tint(Color.Blue)
+        )
+
+        false -> Image(
+            painter = painterResource(id = R.drawable.ic_o),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(1f),
+            colorFilter = ColorFilter.tint(Color.Red)
+        )
+        //remove path from ic_null.xml to display nothing
+        null -> Image(
+            painter = painterResource(id = R.drawable.ic_null),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(1f)
+        )
+    }
 }
