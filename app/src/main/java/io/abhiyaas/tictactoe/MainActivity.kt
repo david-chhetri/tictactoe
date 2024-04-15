@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -116,6 +120,54 @@ fun Header(playerTurn: Boolean) {
 
 @Composable
 fun Board(moves: List<Boolean?>) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .padding(32.dp)
+            .background(Color.LightGray)
+
+
+    ) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxSize(1f)
+        ) {
+            //put two rows for horizontal black bars
+            Row(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth(1f)
+                    .background(Color.Black)
+            ) {}
+            Row(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth(1f)
+                    .background(Color.Black)
+            ) {}
+        }
+        //two vertical bars
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxSize(1f)
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(2.dp)
+                    .fillMaxHeight(1f)
+                    .background(Color.Black)
+            ) {}
+
+            Column(
+                modifier = Modifier
+                    .width(2.dp)
+                    .fillMaxHeight(1f)
+                    .background(Color.Black)
+            ) {}
+        }
+
+
+    }
 
 
 }
