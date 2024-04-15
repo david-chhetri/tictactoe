@@ -109,9 +109,9 @@ fun MainScreen() {
         Header(playerTurn.value)
 
         Board(moves, onTap)
-
+        
         //AI moves - implementing Spinner with Coroutine
-        if (!playerTurn.value) {
+        if (!playerTurn.value && win.value == null) {
             CircularProgressIndicator(color = Color.Red, modifier = Modifier.padding(16.dp))
 
             val coroutineScope = rememberCoroutineScope()
