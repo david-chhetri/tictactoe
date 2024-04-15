@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.abhiyaas.tictactoe.ui.theme.TicTacToeTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TTTScreen()
+                    MainScreen()
                 }
             }
         }
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TTTScreen() {
+fun MainScreen() {
     val playerTurn = remember { mutableStateOf(true) }
 
     //true means player move, false means AI move, null means no move
@@ -61,10 +62,14 @@ fun TTTScreen() {
         )
     }
 
-    Header(playerTurn.value)
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "TicTacToe", fontSize = 30.sp, modifier = Modifier.padding(16.dp))
 
-    Board(moves)
+        Header(playerTurn.value)
 
+        Board(moves)
+
+    }
 
 
 }
@@ -110,7 +115,7 @@ fun Header(playerTurn: Boolean) {
 }
 
 @Composable
-fun Board(moves: List<Boolean?>){
+fun Board(moves: List<Boolean?>) {
 
 
 }
